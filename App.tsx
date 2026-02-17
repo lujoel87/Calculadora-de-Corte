@@ -1,48 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { FundaDimensions, PliegoDimensions, CalculationResults } from './types';
+import { calculateOptimization } from './lib/calculator';
+import InputForm from './components/InputForm';
+import ResultsView from './components/ResultsView';
 
-function App() {
-  const [ancho, setAncho] = useState('');
-  const [alto, setAlto] = useState('');
-  const [resultado, setResultado] = useState('');
+type View = 'input' | 'results';
 
-  const calcular = () => {
-    if(!ancho || !alto) return;
-    const res = (Number(ancho) * Number(alto));
-    setResultado(`Área total: ${res} cm²`);
+const App: React.FC = () => {
+  const [view, setView] = useState<View>('input');
+  const [funda, setFunda] = useState<FundaDimensions>({ alto: 0, ancho: 0, fuelle: 0 });
+  const [pliego, setPliego] = useState<PliegoDimensions>({ ancho: 0, alto: 0 });
+  const [cantidad, setCantidad] = useState<number>(0);
+  const [results, setResults] = useState<CalculationResults | null>(null);
+
+  const handleCalculate = useCallback((f: FundaDimensions, p: PliegoDimensions, c: number) => {
+    setFunda(f);
+    setPliego(p);
+    setCantidad(c);
+    const res = calculateOptimization(f, p, c);
+    setResults(res);
+    setView('results');
+  }, []);
+
+  // Función para volver atrás manteniendo los valores actuales
+  const handleBack = () => {
+    setView('input');
+  };
+
+  // Función para iniciar un proyecto desde cero
+  const handleNewProject = () => {
+    setFunda({ alto: 0, ancho: 0, fuelle: 0 });
+    setPliego({ ancho: 0, alto: 0 });
+    setCantidad(0);
+    setResults(null);
+    setView('input');
   };
 
   return (
-    <div style={{ padding: '40px', textAlign: 'center', background: '#222', color: 'white', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      <h1 style={{ color: '#4CAF50' }}>📐 CALCULADORA DE CORTE</h1>
-      <div style={{ margin: '20px 0' }}>
-        <input 
-          type="number" 
-          placeholder="Ancho (cm)" 
-          value={ancho} 
-          onChange={(e) => setAncho(e.target.value)} 
-          style={{ padding: '15px', borderRadius: '8px', width: '80%', marginBottom: '10px' }} 
+    <div className="min-h-screen flex flex-col font-sans">
+      {view === 'input' ? (
+        <InputForm 
+          onCalculate={handleCalculate} 
+          initialFunda={funda}
+          initialPliego={pliego}
+          initialCantidad={cantidad}
         />
-        <input 
-          type="number" 
-          placeholder="Alto (cm)" 
-          value={alto} 
-          onChange={(e) => setAlto(e.target.value)} 
-          style={{ padding: '15px', borderRadius: '8px', width: '80%' }} 
-        />
-      </div>
-      <button 
-        onClick={calcular} 
-        style={{ padding: '15px 30px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '8px', fontSize: '18px', fontWeight: 'bold' }}
-      >
-        CALCULAR AHORA
-      </button>
-      {resultado && (
-        <div style={{ marginTop: '30px', fontSize: '24px', border: '2px solid #4CAF50', padding: '20px', borderRadius: '10px' }}>
-          {resultado}
-        </div>
+      ) : (
+        results && (
+          <ResultsView 
+            results={results} 
+            onBack={handleBack} 
+            onNewProject={handleNewProject} 
+          />
+        )
       )}
     </div>
   );
-}
+};
 
 export default App;
