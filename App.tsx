@@ -3,26 +3,44 @@ import React, { useState } from 'react';
 function App() {
   const [ancho, setAncho] = useState('');
   const [alto, setAlto] = useState('');
-  const [resultado, setResultado] = useState<string | null>(null);
+  const [resultado, setResultado] = useState('');
 
   const calcular = () => {
-    const res = (Number(ancho) * Number(alto)) / 10; // Ejemplo de cálculo
-    setResultado(`El área total es: ${res} unidades.`);
+    if(!ancho || !alto) return;
+    const res = (Number(ancho) * Number(alto));
+    setResultado(`Área total: ${res} cm²`);
   };
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'sans-serif', textAlign: 'center', backgroundColor: '#1a1a1a', color: 'white', minHeight: '100vh' }}>
-      <h1>📐 Calculadora de Corte</h1>
-      <div style={{ marginBottom: '15px' }}>
-        <input type="number" placeholder="Ancho" value={ancho} onChange={(e) => setAncho(e.target.value)} style={{ padding: '10px', borderRadius: '5px', border: 'none' }} />
+    <div style={{ padding: '40px', textAlign: 'center', background: '#222', color: 'white', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+      <h1 style={{ color: '#4CAF50' }}>📐 CALCULADORA DE CORTE</h1>
+      <div style={{ margin: '20px 0' }}>
+        <input 
+          type="number" 
+          placeholder="Ancho (cm)" 
+          value={ancho} 
+          onChange={(e) => setAncho(e.target.value)} 
+          style={{ padding: '15px', borderRadius: '8px', width: '80%', marginBottom: '10px' }} 
+        />
+        <input 
+          type="number" 
+          placeholder="Alto (cm)" 
+          value={alto} 
+          onChange={(e) => setAlto(e.target.value)} 
+          style={{ padding: '15px', borderRadius: '8px', width: '80%' }} 
+        />
       </div>
-      <div style={{ marginBottom: '15px' }}>
-        <input type="number" placeholder="Alto" value={alto} onChange={(e) => setAlto(e.target.value)} style={{ padding: '10px', borderRadius: '5px', border: 'none' }} />
-      </div>
-      <button onClick={calcular} style={{ padding: '10px 20px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-        CALCULAR
+      <button 
+        onClick={calcular} 
+        style={{ padding: '15px 30px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '8px', fontSize: '18px', fontWeight: 'bold' }}
+      >
+        CALCULAR AHORA
       </button>
-      {resultado && <div style={{ marginTop: '20px', padding: '15px', border: '1px solid #4CAF50', borderRadius: '10px' }}>{resultado}</div>}
+      {resultado && (
+        <div style={{ marginTop: '30px', fontSize: '24px', border: '2px solid #4CAF50', padding: '20px', borderRadius: '10px' }}>
+          {resultado}
+        </div>
+      )}
     </div>
   );
 }
