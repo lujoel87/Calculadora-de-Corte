@@ -1,4 +1,3 @@
-
 import { FundaDimensions, PliegoDimensions, CalculationResults, LayoutBlock } from '../types';
 
 export const calculateOptimization = (

@@ -19,16 +19,9 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
     layoutBlocks
   } = results;
 
-  // Proporción real del pliego para mantener la escala física en pantalla
   const realAspectRatio = pliegoAncho / pliegoAlto;
-
-  // Estilo para el tamaño del corte (badge)
   const cutSizeBadgeClasses = "text-[16px] font-black dark:text-white bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 tabular-nums min-w-[60px] text-center";
-  
-  // Estilo para los resultados destacados ajustado a 16px para coincidir con el badge de tamaño de corte
   const highlightValueClasses = "text-[16px] font-black leading-none tracking-tight tabular-nums";
-
-  // Clase común para títulos en blanco
   const titleClasses = "text-[11px] font-black text-white uppercase tracking-widest";
 
   return (
@@ -71,6 +64,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
                 height: realAspectRatio > 1 ? 'auto' : '100%'
               }}
             >
+              {/* Dimensiones del Pliego */}
               <div className="absolute -top-7 left-0 right-0 flex items-center justify-between text-[10px] font-bold text-slate-400 dark:text-slate-600 pointer-events-none">
                  <div className="h-2 w-px bg-current"></div>
                  <div className="flex-1 border-t border-dashed border-current mx-2 flex items-center justify-center">
@@ -87,6 +81,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
                  <div className="w-2 h-px bg-current"></div>
               </div>
 
+              {/* El Pliego con los Cortes */}
               <div className="w-full h-full relative bg-slate-50 dark:bg-white/5 border-[1.5px] border-slate-400 dark:border-slate-500 shadow-2xl overflow-hidden">
                 {layoutBlocks.map((block, bIdx) => (
                   <div 
@@ -105,12 +100,10 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
                     {Array.from({ length: block.cols * block.rows }).map((_, i) => (
                       <div 
                         key={i} 
-                        className={`flex flex-col items-center justify-center border-[0.5px] border-white/50 dark:border-black/50 relative ${block.rotated ? 'bg-indigo-500/40 dark:bg-indigo-500/50' : 'bg-primary/40 dark:bg-primary/50'}`}
+                        className={`flex flex-col items-center justify-center border-[0.5px] border-white/30 dark:border-black/30 relative ${block.rotated ? 'bg-indigo-500/50' : 'bg-primary/50'}`}
                       >
                         <div className="flex flex-col items-center justify-center pointer-events-none text-center p-0.5 overflow-hidden">
-                          <span className="text-[6px] sm:text-[8px] font-black text-slate-900 dark:text-white leading-none tracking-tighter truncate w-full">{block.cutW}</span>
-                          <div className="w-2 h-[0.5px] bg-black/10 dark:bg-white/10 my-0.5"></div>
-                          <span className="text-[6px] sm:text-[8px] font-black text-slate-900 dark:text-white leading-none tracking-tighter truncate w-full">{block.cutH}</span>
+                          <span className="text-[6px] sm:text-[8px] font-black text-white leading-none tracking-tighter truncate w-full">{block.cutW}</span>
                         </div>
                       </div>
                     ))}
@@ -121,7 +114,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
           </div>
         </section>
 
-        {/* Métricas de Producción */}
+        {/* Resumen de Cálculo */}
         <section className="bg-white dark:bg-card-dark border border-slate-200 dark:border-white/5 rounded-3xl overflow-hidden shadow-xl shadow-slate-200/20 dark:shadow-none">
           <div className="px-6 py-4 bg-slate-50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5 flex justify-between items-center">
              <span className={titleClasses}>Resumen de Cálculo</span>

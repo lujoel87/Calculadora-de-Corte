@@ -26,7 +26,7 @@ const InputForm: React.FC<InputFormProps> = ({ onCalculate, initialFunda, initia
     setPliego(prev => ({ ...prev, [field]: parseFloat(val) || 0 }));
   };
 
-  // Clase común para los títulos, ahora con color blanco (text-white)
+  // Clase común para los títulos en blanco (11px black weight)
   const titleClasses = "text-[11px] font-black text-white uppercase tracking-widest";
 
   return (

@@ -1,4 +1,3 @@
-
 export interface FundaDimensions {
   alto: number;
   ancho: number;
