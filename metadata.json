@@ -1,5 +1,5 @@
 {
-  "name": "Calculadora de Cortes Pro",
-  "description": "Una aplicación profesional para optimizar el corte de pliegos de papel o material, con visualización de distribución y cálculo de desperdicio.",
+  "name": "Calculadora de Corte",
+  "description": "Herramienta profesional para la optimización de cortes de pliegos.",
   "requestFramePermissions": []
 }

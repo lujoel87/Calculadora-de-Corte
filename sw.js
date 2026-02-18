@@ -1,16 +1,15 @@
-const CACHE_NAME = 'calculadora-corte-v1';
+const CACHE_NAME = 'calculadora-corte-v3';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/index.tsx',
-  '/manifest.json',
-  '/icono.png',
+  './',
+  './index.html',
+  './manifest.json',
+  './icono.png',
   'https://cdn.tailwindcss.com?plugins=forms,container-queries',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap',
   'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap'
 ];
 
-// Instalación: Cachear recursos estáticos
+// Instalación: Cachear recursos críticos
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -20,7 +19,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activación: Limpiar caches antiguos
+// Activación: Limpieza de caches antiguos
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,38 +31,33 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Estrategia de red: Cache First con fallback a red
+// Estrategia: Network First con fallback a Cache para asegurar frescura y funcionamiento offline
 self.addEventListener('fetch', (event) => {
-  // Solo interceptar peticiones GET
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        // Cacheamos dinámicamente nuevas peticiones del mismo origen o fuentes permitidas
-        if (
-          networkResponse && 
-          networkResponse.status === 200 && 
-          (event.request.url.startsWith(self.location.origin) || 
-           event.request.url.includes('fonts.googleapis.com') || 
-           event.request.url.includes('cdn.tailwindcss.com'))
-        ) {
-          const responseToCache = networkResponse.clone();
+    fetch(event.request)
+      .then((response) => {
+        // Si la red responde, guardamos una copia en cache
+        if (response && response.status === 200) {
+          const responseToCache = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
         }
-        return networkResponse;
-      }).catch(() => {
-        // Si falla la red y no hay cache, devolver el index.html para SPA
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
-      });
-    })
+        return response;
+      })
+      .catch(() => {
+        // Si falla la red, buscamos en la cache
+        return caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          // Fallback para navegación (SPA)
+          if (event.request.mode === 'navigate') {
+            return caches.match('./index.html');
+          }
+        });
+      })
   );
 });
