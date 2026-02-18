@@ -1,7 +1,7 @@
-const CACHE_NAME = 'eco-kraft-v12-final';
+const CACHE_NAME = 'eco-kraft-v15-master';
 
-// Recursos locales mínimos para que la cáscara de la app funcione
-const PRECACHE_OFFLINE = [
+// Lista de recursos críticos para que la app arranque sin internet
+const PRECACHE_ASSETS = [
   '/',
   '/index.html',
   '/index.tsx',
@@ -11,53 +11,66 @@ const PRECACHE_OFFLINE = [
   '/components/InputForm.tsx',
   '/components/ResultsView.tsx',
   '/manifest.json',
-  '/metadata.json'
+  '/metadata.json',
+  // Librerías externas (esenciales para el renderizado)
+  'https://cdn.tailwindcss.com?plugins=forms,container-queries',
+  'https://esm.sh/react@19.0.0',
+  'https://esm.sh/react-dom@19.0.0',
+  'https://esm.sh/react-dom@19.0.0/client',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Space+Grotesk:wght@700&display=swap'
 ];
 
+// 1. Instalación: Descarga todo lo necesario inmediatamente
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('Instalando Pre-caché...');
-      return cache.addAll(PRECACHE_OFFLINE);
+      console.log('SW: Precargando recursos críticos...');
+      return cache.addAll(PRECACHE_ASSETS);
     })
   );
   self.skipWaiting();
 });
 
+// 2. Activación: Limpia versiones antiguas
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) return caches.delete(key);
-        })
+        keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
       );
     })
   );
   self.clients.claim();
 });
 
+// 3. Estrategia de Carga: Cache-First (Priorizar siempre lo guardado)
 self.addEventListener('fetch', (event) => {
-  // Solo procesar peticiones GET
   if (event.request.method !== 'GET') return;
 
   const url = new URL(event.request.url);
 
+  // Manejo especial para la navegación inicial (cuando refrescas o abres la app)
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      caches.match('/index.html').then((response) => {
+        return response || fetch(event.request);
+      })
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // 1. Si está en caché, lo devolvemos inmediatamente (Cache-First)
       if (cachedResponse) {
         return cachedResponse;
       }
 
-      // 2. Si no está, lo buscamos en la red
+      // Si no está en caché, ir a la red y guardarlo para siempre
       return fetch(event.request).then((networkResponse) => {
-        // Solo cacheamos respuestas válidas
         if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
         }
 
-        // Guardamos dinámicamente (esto captura React, Tailwind y fuentes al primer uso)
         const responseToCache = networkResponse.clone();
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseToCache);
@@ -65,11 +78,10 @@ self.addEventListener('fetch', (event) => {
 
         return networkResponse;
       }).catch(() => {
-        // 3. OFFLINE CRÍTICO: Si falla la red y es una navegación, devolver el index.html
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html') || caches.match('/');
+        // Si falla la red y no hay caché, intentamos devolver el index si es una página
+        if (event.request.destination === 'document') {
+          return caches.match('/index.html');
         }
-        return null;
       });
     })
   );
