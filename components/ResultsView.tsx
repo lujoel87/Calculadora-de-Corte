@@ -27,6 +27,8 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
 
   // Variable para controlar que solo se muestre la medida en una pieza
   let hasShownLabel = false;
+  // Verificamos si existe alguna pieza horizontal en la distribución
+  const hasHorizontalBlocks = layoutBlocks.some(block => !block.rotated);
 
   return (
     <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark min-h-screen">
@@ -102,8 +104,9 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
                     }}
                   >
                     {Array.from({ length: block.cols * block.rows }).map((_, i) => {
-                      // Solo mostramos la medida en la primera pieza horizontal que encontremos
-                      const showLabel = !hasShownLabel && !block.rotated;
+                      // Priorizamos mostrar la medida en la primera pieza horizontal. 
+                      // Si no hay horizontales, la mostramos en la primera que aparezca (vertical).
+                      const showLabel = !hasShownLabel && (hasHorizontalBlocks ? !block.rotated : true);
                       if (showLabel) hasShownLabel = true;
 
                       return (
