@@ -15,7 +15,6 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
     pliegoAlto,
     piezasPorPliego,
     totalPliegos,
-    totalPiezas,
     desperdicio,
     layoutBlocks
   } = results;
@@ -24,11 +23,6 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
   const cutSizeBadgeClasses = "text-[16px] font-black dark:text-white bg-slate-100 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-white/10 tabular-nums min-w-[60px] text-center";
   const highlightValueClasses = "text-[16px] font-black leading-none tracking-tight tabular-nums";
   const titleClasses = "text-[11px] font-black text-white uppercase tracking-widest";
-
-  // Variable para controlar que solo se muestre la medida en una pieza
-  let hasShownLabel = false;
-  // Verificamos si existe alguna pieza horizontal en la distribución
-  const hasHorizontalBlocks = layoutBlocks.some(block => !block.rotated);
 
   return (
     <div className="flex-1 flex flex-col bg-background-light dark:bg-background-dark min-h-screen">
@@ -103,27 +97,16 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
                       gridTemplateRows: `repeat(${block.rows}, 1fr)`,
                     }}
                   >
-                    {Array.from({ length: block.cols * block.rows }).map((_, i) => {
-                      // Priorizamos mostrar la medida en la primera pieza horizontal. 
-                      // Si no hay horizontales, la mostramos en la primera que aparezca (vertical).
-                      const showLabel = !hasShownLabel && (hasHorizontalBlocks ? !block.rotated : true);
-                      if (showLabel) hasShownLabel = true;
-
-                      return (
-                        <div 
-                          key={i} 
-                          className={`flex flex-col items-center justify-center border-[0.5px] border-white/30 dark:border-black/30 relative ${block.rotated ? 'bg-indigo-500/50' : 'bg-primary/50'}`}
-                        >
-                          {showLabel && (
-                            <div className="flex flex-col items-center justify-center pointer-events-none text-center p-0.5 overflow-hidden">
-                              <span className="text-[7px] sm:text-[9px] font-black text-white leading-none tracking-tighter truncate w-full">
-                                {block.cutW}×{block.cutH}
-                              </span>
-                            </div>
-                          )}
+                    {Array.from({ length: block.cols * block.rows }).map((_, i) => (
+                      <div 
+                        key={i} 
+                        className={`flex flex-col items-center justify-center border-[0.5px] border-white/30 dark:border-black/30 relative ${block.rotated ? 'bg-indigo-500/50' : 'bg-primary/50'}`}
+                      >
+                        <div className="flex flex-col items-center justify-center pointer-events-none text-center p-0.5 overflow-hidden">
+                          <span className="text-[6px] sm:text-[8px] font-black text-white leading-none tracking-tighter truncate w-full">{block.cutW}</span>
                         </div>
-                      );
-                    })}
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
@@ -160,9 +143,9 @@ const ResultsView: React.FC<ResultsViewProps> = ({ results, onBack, onNewProject
             </div>
 
             <div className="flex justify-between items-center py-5">
-              <span className="text-[15px] text-slate-600 dark:text-slate-400 font-medium">Total tamaños</span>
-              <span className={`${highlightValueClasses} text-primary`}>
-                {totalPiezas}
+              <span className="text-[15px] text-slate-600 dark:text-slate-400 font-medium">Área utilizada</span>
+              <span className={`${highlightValueClasses} ${desperdicio > 30 ? 'text-amber-500' : 'text-green-500'}`}>
+                {100 - desperdicio}%
               </span>
             </div>
           </div>
