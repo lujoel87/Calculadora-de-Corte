@@ -38,7 +38,7 @@ const InputForm: React.FC<InputFormProps> = ({ onCalculate, initialFunda, initia
           </svg>
         </button>
         <h1 className={`${titleClasses} text-center flex-1`}>
-          CALCULADORA DE CORTES
+          CALCULADORA DE CORTE
         </h1>
         <button className="p-2 -mr-2 text-primary">
           <span className="material-symbols-outlined">info</span>

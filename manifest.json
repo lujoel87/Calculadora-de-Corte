@@ -1,6 +1,6 @@
 {
-  "name": "Calculadora de Cortes Pro",
-  "short_name": "Cortes Pro",
+  "name": "Calculadora de Corte",
+  "short_name": "Corte",
   "description": "Optimización profesional de cortes de pliegos.",
   "start_url": "/",
   "display": "standalone",
