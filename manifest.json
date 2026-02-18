@@ -1,9 +1,9 @@
 {
-  "id": "com.calculadora.corte.app",
-  "name": "Calculadora de Corte",
+  "id": "com.calculadora.corte.v1",
+  "name": "Calculadora de Corte Pro",
   "short_name": "Corte Pro",
-  "description": "Herramienta profesional para la optimización de cortes de pliegos.",
-  "start_url": "./",
+  "description": "Optimización profesional de cortes de pliegos para imprentas.",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#0A0F14",
