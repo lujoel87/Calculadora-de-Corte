@@ -1,7 +1,7 @@
-const CACHE_NAME = 'eco-kraft-v4';
+const CACHE_NAME = 'eco-kraft-v5-final';
 
-// Recursos críticos iniciales
-const PRECACHE_ASSETS = [
+// Lista exhaustiva de todo lo necesario para arrancar la app desde cero
+const ASSETS_TO_PRECACHE = [
   '/',
   '/index.html',
   '/index.tsx',
@@ -12,20 +12,28 @@ const PRECACHE_ASSETS = [
   '/lib/calculator.ts',
   '/components/InputForm.tsx',
   '/components/ResultsView.tsx',
-  'https://cdn.tailwindcss.com?plugins=forms,container-queries'
+  // Librerías externas críticas (Importmap)
+  'https://cdn.tailwindcss.com?plugins=forms,container-queries',
+  'https://esm.sh/react@^19.2.4',
+  'https://esm.sh/react-dom@^19.2.4/',
+  'https://esm.sh/react@^19.2.4/',
+  // Estética y Fuentes
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap',
+  'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap'
 ];
 
-// Instalación: Guardar recursos básicos
+// Instalación: Forzar la descarga de todo
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(PRECACHE_ASSETS);
+      // Usamos addAll pero permitimos que algunos fallen si son externos (opcional)
+      return cache.addAll(ASSETS_TO_PRECACHE);
     })
   );
   self.skipWaiting();
 });
 
-// Activación: Limpieza de versiones viejas
+// Activación: Limpiar cualquier rastro de versiones viejas
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -37,30 +45,37 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Intercepción de peticiones: Estrategia Stale-While-Revalidate
+// Fetch: Estrategia "Cache First" para archivos estáticos y "Network First" para el resto
 self.addEventListener('fetch', (event) => {
-  // Solo manejar peticiones GET
   if (event.request.method !== 'GET') return;
 
+  const url = new URL(event.request.url);
+
   event.respondWith(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.match(event.request).then((cachedResponse) => {
-        const fetchPromise = fetch(event.request).then((networkResponse) => {
-          // Si la petición es válida, la guardamos/actualizamos en caché
-          if (networkResponse && networkResponse.status === 200) {
-            cache.put(event.request, networkResponse.clone());
-          }
+    caches.match(event.request).then((cachedResponse) => {
+      // Si está en caché, lo devolvemos inmediatamente (Velocidad máxima)
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      // Si no está en caché, lo buscamos en la red y lo guardamos para la próxima
+      return fetch(event.request).then((networkResponse) => {
+        if (!networkResponse || networkResponse.status !== 200) {
           return networkResponse;
-        }).catch(() => {
-          // Si falla la red (offline) y es una navegación, devolver index.html
-          if (event.request.mode === 'navigate') {
-            return cache.match('/index.html') || cache.match('/');
-          }
-          return null;
+        }
+
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
         });
 
-        // Devolvemos la respuesta cacheada si existe, o esperamos a la red
-        return cachedResponse || fetchPromise;
+        return networkResponse;
+      }).catch(() => {
+        // FALLBACK: Si falla la red y no hay caché...
+        // Si es una navegación (abrir la app), devolvemos el index.html
+        if (event.request.mode === 'navigate') {
+          return caches.match('/index.html') || caches.match('/');
+        }
       });
     })
   );
