@@ -11,7 +11,7 @@ const ASSETS_TO_CACHE = [
   '/components/InputForm.tsx',
   '/components/ResultsView.tsx',
   '/manifest.json',
-  '/icono.png',
+  '/logo.png',
   'https://cdn.tailwindcss.com?plugins=forms,container-queries',
   'https://esm.sh/react@^19.2.4',
   'https://esm.sh/react-dom@^19.2.4/',

@@ -42,8 +42,8 @@
       "destination": "/manifest.json"
     },
     {
-      "source": "/icono.png",
-      "destination": "/icono.png"
+      "source": "/logo.png",
+      "destination": "/logo.png"
     },
     {
       "source": "/(.*)",
