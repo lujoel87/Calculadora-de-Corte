@@ -1,6 +1,6 @@
 {
-  "name": "Calculadora de Cortes Pro",
-  "short_name": "Cortes Pro",
+  "name": "Calculadora de Corte",
+  "short_name": "Calculadora de Corte",
   "description": "Herramienta profesional para la optimización de cortes de pliegos.",
   "start_url": "/",
   "display": "standalone",
@@ -9,15 +9,20 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/1048/1048953.png",
+      "src": "icono.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icono.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icono.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
-    },
-    {
-      "src": "https://cdn-icons-png.flaticon.com/192/1048/1048953.png",
-      "sizes": "192x192",
-      "type": "image/png"
     }
   ]
 }
