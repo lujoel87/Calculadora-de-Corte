@@ -1,8 +1,10 @@
-const CACHE_NAME = 'cortes-pro-v1';
+const CACHE_NAME = 'calculadora-corte-v1';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
+  '/index.tsx',
   '/manifest.json',
+  '/icono.png',
   'https://cdn.tailwindcss.com?plugins=forms,container-queries',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap',
   'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap'
@@ -42,8 +44,14 @@ self.addEventListener('fetch', (event) => {
       }
 
       return fetch(event.request).then((networkResponse) => {
-        // Cacheamos dinámicamente nuevas peticiones de la misma origen o fuentes permitidas
-        if (networkResponse && networkResponse.status === 200 && (event.request.url.startsWith(self.location.origin) || event.request.url.includes('fonts.googleapis.com') || event.request.url.includes('cdn.tailwindcss.com'))) {
+        // Cacheamos dinámicamente nuevas peticiones del mismo origen o fuentes permitidas
+        if (
+          networkResponse && 
+          networkResponse.status === 200 && 
+          (event.request.url.startsWith(self.location.origin) || 
+           event.request.url.includes('fonts.googleapis.com') || 
+           event.request.url.includes('cdn.tailwindcss.com'))
+        ) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
