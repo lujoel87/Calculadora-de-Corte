@@ -3,25 +3,25 @@
   "name": "Calculadora de Corte Pro",
   "short_name": "Corte Pro",
   "description": "Optimización profesional de cortes de pliegos para imprentas.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#0A0F14",
   "theme_color": "#137fec",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "./icono.png",
+      "src": "/icono.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./icono.png",
+      "src": "/icono.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "./icono.png",
+      "src": "/icono.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

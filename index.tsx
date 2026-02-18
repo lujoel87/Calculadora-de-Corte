@@ -10,7 +10,8 @@ if ('serviceWorker' in navigator) {
     if (window.self !== window.top) {
       console.warn('⚠️ El registro del Service Worker se omitió porque la app está en un iframe. Para probar la PWA, abre la URL de Vercel directamente en una pestaña nueva.');
     } else {
-      navigator.serviceWorker.register('./sw.js', { scope: '/' })
+      // Usamos ruta absoluta /sw.js
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
         .then(registration => {
           console.log('✅ PWA: Service Worker registrado con éxito en el scope:', registration.scope);
         })

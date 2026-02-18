@@ -1,8 +1,13 @@
 {
+  "cleanUrls": true,
   "headers": [
     {
       "source": "/sw.js",
       "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript"
+        },
         {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
@@ -17,6 +22,10 @@
       "source": "/manifest.json",
       "headers": [
         {
+          "key": "Content-Type",
+          "value": "application/json"
+        },
+        {
           "key": "Cache-Control",
           "value": "public, max-age=0, must-revalidate"
         }
@@ -24,6 +33,18 @@
     }
   ],
   "rewrites": [
+    {
+      "source": "/sw.js",
+      "destination": "/sw.js"
+    },
+    {
+      "source": "/manifest.json",
+      "destination": "/manifest.json"
+    },
+    {
+      "source": "/icono.png",
+      "destination": "/icono.png"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
