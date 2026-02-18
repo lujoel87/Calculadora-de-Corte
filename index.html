@@ -2,7 +2,7 @@
 <html lang="es" class="dark">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#0A0F14" />
@@ -11,8 +11,7 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIGZpbGw9IiM0YjVkNGUiLz48dGV4dCB4PSI1MCUiIHk9IjQwJSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iOTAwIiBmb250LXNpemU9IjEyMCIgbGV0dGVyLXNwYWNpbmc9Ii00Ij5FQ088L3RleHQ+PHRleHQgeD0iNTAlIiB5PSI2OCUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjkwMCIgZm9udC1zaXplPSIxMjAiIGxldHRlci1zcGFjaW5nPSItNCI+S1JBRlQ8L3RleHQ+PC9zdmc+" />
   <title>Calculadora de Corte</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
   <script>
     window.tailwind.config = {
       darkMode: "class",
@@ -23,10 +22,6 @@
             "background-light": "#f6f7f8",
             "background-dark": "#0A0F14",
             "card-dark": "#101922"
-          },
-          fontFamily: {
-            "display": ["Space Grotesk", "sans-serif"],
-            "sans": ["Inter", "sans-serif"]
           }
         },
       },
@@ -38,43 +33,34 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
       }
-      .sheet-grid-pattern {
-        background-image: radial-gradient(circle, #ffffff08 1px, transparent 1px);
-        background-size: 15px 15px;
-      }
     }
     body {
-      @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 overflow-x-hidden;
+      @apply bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100;
       -webkit-tap-highlight-color: transparent;
-      overscroll-behavior-y: contain;
+      user-select: none;
     }
   </style>
   <script type="importmap">
-  {
-    "imports": {
-      "react": "https://esm.sh/react@^19.2.4",
-      "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-      "react/": "https://esm.sh/react@^19.2.4/"
-    }
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
   }
-  </script>
+}
+</script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
+        navigator.serviceWorker.register('/sw.js', { scope: '/' })
           .then(reg => {
-            console.log('SW registrado');
-            reg.onupdatefound = () => {
-              const installingWorker = reg.installing;
-              installingWorker.onstatechange = () => {
-                if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // Nueva versión lista, podrías mostrar un aviso aquí
-                  console.log('Nueva versión disponible, por favor recarga.');
-                }
-              };
-            };
+            console.log('SW activo');
+            // Forzar actualización si hay cambios
+            reg.update();
           })
-          .catch(err => console.log('Fallo registro SW', err));
+          .catch(err => console.error('Error SW:', err));
       });
     }
   </script>
